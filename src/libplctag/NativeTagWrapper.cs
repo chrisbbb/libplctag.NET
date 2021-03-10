@@ -1,4 +1,5 @@
-﻿using System;
+﻿using libplctag.DataTypes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -305,6 +306,17 @@ namespace libplctag
             ThrowIfAlreadyDisposed();
 
             var result = _native.plc_tag_get_size(nativeTagHandle);
+            if (result < 0)
+                throw new LibPlcTagException((Status)result);
+            else
+                return result;
+        }
+
+        public ABType GetElementType()
+        {
+            ThrowIfAlreadyDisposed();
+
+            ABType result = (ABType) _native.plc_tag_get_int_attribute(nativeTagHandle, "elem_type", 0);
             if (result < 0)
                 throw new LibPlcTagException((Status)result);
             else
