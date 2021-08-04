@@ -13,13 +13,6 @@ namespace libplctag.DataTypes
         InputRegister = 3
     }
 
-    // Identifies the data types for modbus
-    public enum MbDataType
-    {
-        NONE = 0,
-        BOOL = 1,
-        INT16 = 2
-    }
 
     public static class ModbusTypeInfoService
     {
@@ -31,12 +24,12 @@ namespace libplctag.DataTypes
             {"ir", MbRegisterType.InputRegister }
         };
 
-        private static Dictionary<MbRegisterType, MbDataType> _defaultRegisterTypeToDataTypeMapping = new Dictionary<MbRegisterType, MbDataType>
+        private static Dictionary<MbRegisterType, PlcValueType> _defaultRegisterTypeToDataTypeMapping = new Dictionary<MbRegisterType, PlcValueType>
         {
-            { MbRegisterType.Coil, MbDataType.BOOL },
-            { MbRegisterType.DiscreteInput, MbDataType.BOOL },
-            { MbRegisterType.HoldRegister, MbDataType.INT16 },
-            { MbRegisterType.InputRegister, MbDataType.INT16 }
+            { MbRegisterType.Coil, PlcValueType.BOOL },
+            { MbRegisterType.DiscreteInput, PlcValueType.BOOL },
+            { MbRegisterType.HoldRegister, PlcValueType.INT16 },
+            { MbRegisterType.InputRegister,PlcValueType.INT16 }
         };
 
         public static MbRegisterType GetRegisterType(string tagName)
@@ -50,17 +43,15 @@ namespace libplctag.DataTypes
             return _registerPrefixMapping[prefix];
         }
 
-        public static MbDataType GetDefaultDataTypeForRegisterType(MbRegisterType regType)
+        public static PlcValueType GetDefaultDataTypeForRegisterType(MbRegisterType regType)
         {
             return _defaultRegisterTypeToDataTypeMapping[regType];
         }
 
-        public static MbDataType GetDefaultDataType(string tagName)
+        public static PlcValueType GetDefaultDataType(string tagName)
         {
             MbRegisterType regType = GetRegisterType(tagName);
             return GetDefaultDataTypeForRegisterType(regType);
         }
     }
-
-    
 }

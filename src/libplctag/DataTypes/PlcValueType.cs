@@ -5,8 +5,9 @@ using System.Text;
 namespace libplctag.DataTypes
 {
     // mirror of the AB type enum from the C library, used for reading the elem_type property of tags
-    public enum ABType
+    public enum PlcValueType
     {
+        UNKNOWN = -1,
         BOOL = 0,
         BOOL_ARRAY = 1,
         CONTROL = 2,
@@ -20,7 +21,7 @@ namespace libplctag.DataTypes
         STRING = 10,
         SHORT_STRING = 11,
         TIMER = 12,
-        TAG_ENTRY = 13 /* not a real AB type, but a pseudo UDT. */
+        TAG_ENTRY = 13 /* not a real type, but a pseudo UDT. */
     }
 }
 

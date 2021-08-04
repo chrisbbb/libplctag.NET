@@ -105,7 +105,21 @@ namespace libplctag
         public byte[] GetBuffer()                           => _tag.GetBuffer();
         public int GetSize()                                => _tag.GetSize();
 
-        public ABType GetElementType()                      => _tag.GetElementType();
+        public PlcValueType GetElementType()
+        {
+            if(this.Protocol == libplctag.Protocol.ab_eip)
+            {
+                return _tag.GetElementType();
+            }
+            else if(this.Protocol == libplctag.Protocol.modbus_tcp)
+            {
+                return ModbusTypeInfoService.GetDefaultDataType(this.Name);
+            }
+            else
+            {
+                return PlcValueType.UNKNOWN;
+            }
+        }
 
         public Status GetStatus()                           => _tag.GetStatus();
 
@@ -145,48 +159,28 @@ namespace libplctag
         // attempts to automatically get the tag value using a detected type
         public object GetValue(int offset = 0)
         {
-            if(this.Protocol == libplctag.Protocol.ab_eip)
+            
+            switch (this.GetElementType())
             {
-                switch (this.GetElementType())
-                {
-                    case ABType.BOOL:
-                        return this.GetBit(offset);
-                    case ABType.BOOL_ARRAY:
-                        return this.GetBuffer();
-                    case ABType.FLOAT32:
-                        return this.GetFloat32(offset);
-                    case ABType.FLOAT64:
-                        return this.GetFloat64(offset);
-                    case ABType.INT8:
-                        return this.GetInt8(offset);
-                    case ABType.INT16:
-                        return this.GetInt16(offset);
-                    case ABType.INT32:
-                        return this.GetInt32(offset);
-                    case ABType.SHORT_STRING:
-                    case ABType.STRING:
-                        return this.GetBuffer().ToString();
-                    default:
-                        throw new InvalidOperationException("Can't automatically detect type.");                    
-                }
-            }
-            else if(this.Protocol == libplctag.Protocol.modbus_tcp)
-            {
-                MbDataType dataType = ModbusTypeInfoService.GetDefaultDataType(this.Name);
-
-                switch (dataType)
-                {
-                    case MbDataType.BOOL:
-                        return this.GetBit(offset);
-                    case MbDataType.INT16:
-                        return this.GetInt16(offset);
-                    default:
-                        throw new InvalidOperationException("Can't automatically detect type.");
-                }
-            }
-            else
-            {
-                throw new InvalidOperationException("Invalid Protocol Type");
+                case DataTypes.PlcValueType.BOOL:
+                    return this.GetBit(offset);
+                case DataTypes.PlcValueType.BOOL_ARRAY:
+                    return this.GetBuffer();
+                case DataTypes.PlcValueType.FLOAT32:
+                    return this.GetFloat32(offset);
+                case DataTypes.PlcValueType.FLOAT64:
+                    return this.GetFloat64(offset);
+                case DataTypes.PlcValueType.INT8:
+                    return this.GetInt8(offset);
+                case DataTypes.PlcValueType.INT16:
+                    return this.GetInt16(offset);
+                case DataTypes.PlcValueType.INT32:
+                    return this.GetInt32(offset);
+                case DataTypes.PlcValueType.SHORT_STRING:
+                case DataTypes.PlcValueType.STRING:
+                    return this.GetBuffer().ToString();
+                default:
+                    throw new InvalidOperationException("Can't automatically detect type.");                    
             }
         }
     }

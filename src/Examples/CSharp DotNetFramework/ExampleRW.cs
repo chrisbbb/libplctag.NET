@@ -1,7 +1,9 @@
 ﻿using libplctag;
 using libplctag.DataTypes;
 using System;
+using System.Collections.Generic;
 using System.Net;
+using System.Text;
 using System.Threading;
 
 namespace CSharpDotNetFramework
@@ -10,56 +12,85 @@ namespace CSharpDotNetFramework
     {
         public static void Run()
         {
-            Console.WriteLine($"\r\n*** ExampleRW ***");
+            PlcType plcType = PlcType.ControlLogix;
 
-            const int TIMEOUT = 5000;
+            Protocol protocol = Protocol.ab_eip;
 
-            //DINT Test Read/Write
-            var myTag = new Tag<DintPlcMapper, int>()
+            string ip = "10.222.91.102";
+
+            List<string> tags = new List<string>
             {
-                //Name of tag on the PLC, Controller-scoped would be just "SomeDINT"
-                Name = "PROGRAM:SomeProgram.SomeDINT",
-                
-                //PLC IP Address
-                Gateway = "10.10.10.10",
-
-                //CIP path to PLC CPU. "1,0" will be used for most AB PLCs
-                Path = "1,0", 
-
-                //Type of PLC
-                PlcType = PlcType.ControlLogix,
-
-                //Protocol
-                Protocol = Protocol.ab_eip,
-
-                //A global timeout value that is used for Initialize/Read/Write methods
-                Timeout = TimeSpan.FromMilliseconds(TIMEOUT), 
+                "ATI_OEE_SLI[0].BIN1.LOG_COUNT"
             };
-            myTag.Initialize();
 
-            //Read tag value - This pulls the value from the PLC into the local Tag value
-            Console.WriteLine($"Starting tag read");
-            myTag.Read();
+            ExampleRW.Core(plcType, protocol, ip, tags);
+        }
 
-            //Read back value from local memory
-            int myDint = myTag.Value;
-            Console.WriteLine($"Initial Value: {myDint}");
 
-            //Set Tag Value
-            myDint++;
-            myTag.Value = myDint;
+        private static void Core(PlcType plcType, Protocol protocol, string ip, List<string> tagNames)
+        {
+            const int TIMEOUT = 20000;
 
-            Console.WriteLine($"Starting tag write ({myDint})");
-            myTag.Write();
+            List<Tag> tags = new List<Tag>();
 
-            //Read tag value - This pulls the value from the PLC into the local Tag value
-            Console.WriteLine($"Starting synchronous tag read");
-            myTag.Read();
+            foreach (string tagName in tagNames)
+            {
+                //DINT Test Read/Write
+                Tag myTag = new Tag
+                {
+                    //Name of tag on the PLC, Controller-scoped would be just "SomeDINT"
+                    Name = tagName,
 
-            //Read back value from local memory
-            var myDintReadBack = myTag.Value;
-            Console.WriteLine($"Final Value: {myDintReadBack}");
+                    //PLC IP Address
+                    Gateway = ip,
 
+                    //CIP path to PLC CPU. "1,0" will be used for most AB PLCs
+                    Path = "1,0",
+
+                    //Type of PLC
+                    PlcType = plcType,
+
+                    //Protocol
+                    Protocol = protocol,
+
+                    //A global timeout value that is used for Initialize/Read/Write methods
+                    Timeout = TimeSpan.FromMilliseconds(TIMEOUT),
+                };
+                myTag.Initialize();
+
+                tags.Add(myTag);
+            }
+
+            while (true)
+            {
+                StringBuilder sb = new StringBuilder();
+
+                for (int i = 0; i < tags.Count; i++)
+                {
+                    Tag myTag = tags[i];
+
+                    //Read tag value - This pulls the value from the PLC into the local Tag value
+                    myTag.Read();
+
+                    //Read back value from local memory
+
+                    //if (mappingFuncs.Count > 1)
+                    //{
+                    //    sb.Append($"{myTag.Name}: {mappingFuncs[i](myTag)} - {myTag.GetElementType()} \n");
+                    //}
+                    //else
+                    //{
+                    //    sb.Append($"{myTag.Name}: {mappingFuncs[0](myTag)} - {myTag.GetElementType()} \n");
+                    //}
+
+                    sb.Append($"{myTag.Name}: {myTag.GetValue(0)}\n");
+                }
+
+                string output = sb.ToString();
+                Console.Clear();
+                Console.Write(output);
+                Thread.Sleep(2000);
+            }
         }
     }
 }

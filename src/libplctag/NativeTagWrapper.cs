@@ -132,7 +132,7 @@ namespace libplctag
             set
             {
                 ThrowIfAlreadyDisposed();
-                if (value <= TimeSpan.Zero || value > maxTimeout)
+                if (value < TimeSpan.Zero || value > maxTimeout)
                     throw new ArgumentOutOfRangeException(nameof(Timeout), value, "Must be greater than 0");
                 _timeout = value;
             }
@@ -312,15 +312,12 @@ namespace libplctag
                 return result;
         }
 
-        public ABType GetElementType()
+        public DataTypes.PlcValueType GetElementType()
         {
             ThrowIfAlreadyDisposed();
 
-            ABType result = (ABType) _native.plc_tag_get_int_attribute(nativeTagHandle, "elem_type", 0);
-            if (result < 0)
-                throw new LibPlcTagException((Status)result);
-            else
-                return result;
+            DataTypes.PlcValueType result = (DataTypes.PlcValueType)_native.plc_tag_get_int_attribute(nativeTagHandle, "elem_type", 0);
+            return result;
         }
 
         public Status GetStatus()

@@ -7,7 +7,7 @@ namespace CSharpDotNetFramework
         static void Main(string[] args)
         {
             ExampleRW.Run();
-            ExampleArray.Run();
+            //ExampleArray.Run();
 
             Console.ReadKey();
         }

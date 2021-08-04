@@ -16,6 +16,10 @@
     <PackageTags></PackageTags>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="libplctag.NativeImport" Version="1.0.10" />
   </ItemGroup>
