@@ -33,8 +33,8 @@
         MicroLogix,
 
         /// <summary>
-        /// Omron PLC.
+        /// Omron PLC. Synonym for omron-njnx, omron-nj, omron-nx, njnx, nx1p2
         /// </summary>
-        Omron
+        Omron,
     }
 }
