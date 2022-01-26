@@ -81,6 +81,27 @@ namespace libplctag
             set => _tag.Timeout = value;
         }
 
+        /// <inheritdoc cref="Tag.AutoSyncReadInterval"/>
+        public TimeSpan? AutoSyncReadInterval
+        {
+            get => _tag.AutoSyncReadInterval;
+            set => _tag.AutoSyncReadInterval = value;
+        }
+
+        /// <inheritdoc cref="Tag.AutoSyncWriteInterval"/>
+        public TimeSpan? AutoSyncWriteInterval
+        {
+            get => _tag.AutoSyncWriteInterval;
+            set => _tag.AutoSyncWriteInterval = value;
+        }
+
+        /// <inheritdoc cref="Tag.DebugLevel"/>
+        public DebugLevel DebugLevel
+        {
+            get => _tag.DebugLevel;
+            set => _tag.DebugLevel = value;
+        }
+
         /// <summary>
         /// Dimensions of Value if it is an array
         /// Ex. {2, 10} for a 2 column, 10 row array
@@ -111,18 +132,24 @@ namespace libplctag
         }
 
         /// <inheritdoc cref="Tag.ReadAsync"/>
-        public async Task ReadAsync(CancellationToken token = default)
+        public async Task<T> ReadAsync(CancellationToken token = default)
         {
             await _tag.ReadAsync(token);
             DecodeAll();
+            return Value;
         }
 
         /// <inheritdoc cref="Tag.Read"/>
-        public void Read()
+        public T Read()
         {
             _tag.Read();
             DecodeAll();
+            return Value;
         }
+
+        object ITag.Read() => Read();
+
+        async Task<object> ITag.ReadAsync(CancellationToken token) => await ReadAsync();
 
         /// <inheritdoc cref="Tag.WriteAsync"/>
         public async Task WriteAsync(CancellationToken token = default)
@@ -134,6 +161,13 @@ namespace libplctag
             await _tag.WriteAsync(token);
         }
 
+        /// <inheritdoc cref="Tag.WriteAsync"/>
+        public async Task WriteAsync(T value, CancellationToken token = default)
+        {
+            Value = value;
+            await WriteAsync(token);
+        }
+
         /// <inheritdoc cref="Tag.Write"/>
         public void Write()
         {
@@ -142,6 +176,13 @@ namespace libplctag
 
             EncodeAll();
             _tag.Write();
+        }
+
+        /// <inheritdoc cref="Tag.Write"/>
+        public void Write(T value)
+        {
+            Value = value;
+            Write();
         }
 
         void DecodeAll()
@@ -168,6 +209,38 @@ namespace libplctag
         /// The local memory value that can be transferred to/from the PLC
         /// </summary>
         public T Value { get; set; }
+        object ITag.Value { get => Value; set => Value = (T)value; }
+
+        public event EventHandler<TagEventArgs> ReadStarted
+        {
+            add => _tag.ReadStarted += value;
+            remove => _tag.ReadStarted -= value;
+        }
+        public event EventHandler<TagEventArgs> ReadCompleted
+        {
+            add => _tag.ReadCompleted += value;
+            remove => _tag.ReadCompleted -= value;
+        }
+        public event EventHandler<TagEventArgs> WriteStarted
+        {
+            add => _tag.WriteStarted += value;
+            remove => _tag.WriteStarted -= value;
+        }
+        public event EventHandler<TagEventArgs> WriteCompleted
+        {
+            add => _tag.WriteCompleted += value;
+            remove => _tag.WriteCompleted -= value;
+        }
+        public event EventHandler<TagEventArgs> Aborted
+        {
+            add => _tag.Aborted += value;
+            remove => _tag.Aborted -= value;
+        }
+        public event EventHandler<TagEventArgs> Destroyed
+        {
+            add => _tag.Destroyed += value;
+            remove => _tag.Destroyed -= value;
+        }
 
     }
 }

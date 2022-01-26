@@ -6,12 +6,12 @@ using System.Threading;
 
 namespace CSharpDotNetCore
 {
-    class Example
+    class SimpleExample
     {
         public static void Run()
         {
-            //A simple starting example that demonstrates reading and writing a DINT tag
-
+            //This is the absolute most simplified example code
+            //Please see the other examples for more features/optimizations
 
             //Instantiate the tag with the proper mapper and datatype
             var myTag = new Tag<DintPlcMapper, int>()
@@ -24,22 +24,16 @@ namespace CSharpDotNetCore
                 Timeout = TimeSpan.FromSeconds(5)
             };
 
-            //Initialize the tag to set up structures and prepare for read/write
-            //This is optional as an optimization before using the tag
-            //If omitted, the tag will initialize on the first Read() or Write()
-            myTag.Initialize();
+            //Write value to PLC
+            //This will call Initialize internally since it's the first use of this tag
+            //myTag.Value will be set to 3737 before being transferred to PLC
+            myTag.Write(3737);
 
-            //The value is held locally and only synchronized on Read() or Write()
-            myTag.Value = 3737;
-
-            //Transfer Value to PLC
-            myTag.Write();
-
-            //Transfer from PLC to Value
-            myTag.Read();
+            //Read value from PLC
+            //Value will also be accessible at myTag.Value
+            int myDint = myTag.Read();
 
             //Write to console
-            int myDint = myTag.Value;
             Console.WriteLine(myDint);
         }
     }

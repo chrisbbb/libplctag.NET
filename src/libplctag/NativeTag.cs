@@ -1,5 +1,6 @@
 ﻿using libplctag.NativeImport;
 using System;
+using System.Text;
 using static libplctag.NativeImport.plctag;
 
 namespace libplctag
@@ -22,6 +23,7 @@ namespace libplctag
         public int plc_tag_read(Int32 tag, int timeout)                                         => plctag.plc_tag_read(tag, timeout);
         public int plc_tag_write(Int32 tag, int timeout)                                        => plctag.plc_tag_write(tag, timeout);
         public int plc_tag_get_size(Int32 tag)                                                  => plctag.plc_tag_get_size(tag);
+        public int plc_tag_set_size(Int32 tag, int new_size)                                    => plctag.plc_tag_set_size(tag, new_size);
         public int plc_tag_abort(Int32 tag)                                                     => plctag.plc_tag_abort(tag);
         public int plc_tag_get_int_attribute(Int32 tag, string attrib_name, int default_value)  => plctag.plc_tag_get_int_attribute(tag, attrib_name, default_value);
         public int plc_tag_set_int_attribute(Int32 tag, string attrib_name, int new_value)      => plctag.plc_tag_set_int_attribute(tag, attrib_name, new_value);
@@ -48,8 +50,12 @@ namespace libplctag
         public int plc_tag_get_bit(Int32 tag, int offset_bit)                                   => plctag.plc_tag_get_bit(tag, offset_bit);
         public int plc_tag_set_bit(Int32 tag, int offset_bit, int val)                          => plctag.plc_tag_set_bit(tag, offset_bit, val);
         public void plc_tag_set_debug_level(int debug_level)                                    => plctag.plc_tag_set_debug_level(debug_level);
-        public int plc_tag_get_raw_bytes(int tag, int start_offset, byte[] buffer, int buffer_length)       => plctag.plc_tag_get_raw_bytes(tag, start_offset, buffer, buffer_length);
-        public int plc_tag_set_raw_bytes(int tag, int start_offset, byte[] buffer, int buffer_length)       => plctag.plc_tag_set_raw_bytes(tag, start_offset, buffer, buffer_length);
-
+        public int plc_tag_get_raw_bytes(int tag, int start_offset, byte[] buffer, int buffer_length)               => plctag.plc_tag_get_raw_bytes(tag, start_offset, buffer, buffer_length);
+        public int plc_tag_set_raw_bytes(int tag, int start_offset, byte[] buffer, int buffer_length)               => plctag.plc_tag_set_raw_bytes(tag, start_offset, buffer, buffer_length);
+        public int plc_tag_get_string_length(int tag, int string_start_offset)                                      => plctag.plc_tag_get_string_length(tag, string_start_offset);
+        public int plc_tag_get_string(int tag, int string_start_offset, StringBuilder buffer, int buffer_length)    => plctag.plc_tag_get_string(tag, string_start_offset, buffer, buffer_length);
+        public int plc_tag_get_string_total_length(int tag, int string_start_offset)                                => plctag.plc_tag_get_string_total_length(tag, string_start_offset);
+        public int plc_tag_get_string_capacity(int tag, int string_start_offset)                                    => plctag.plc_tag_get_string_capacity(tag, string_start_offset);
+        public int plc_tag_set_string(int tag, int string_start_offset, string string_val)                          => plctag.plc_tag_set_string(tag, string_start_offset, string_val);
     }
 }

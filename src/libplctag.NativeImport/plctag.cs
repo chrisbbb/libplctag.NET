@@ -155,6 +155,12 @@ namespace libplctag.NativeImport
             return NativeMethods.plc_tag_get_size(tag);
         }
 
+        public static int plc_tag_set_size(Int32 tag, int new_size)
+        {
+            ExtractLibraryIfRequired();
+            return NativeMethods.plc_tag_set_size(tag, new_size);
+        }
+
         public static int plc_tag_abort(Int32 tag)
         {
             ExtractLibraryIfRequired();
@@ -306,7 +312,7 @@ namespace libplctag.NativeImport
         public static void plc_tag_set_debug_level(int debug_level)
         {
             ExtractLibraryIfRequired();
-            plc_tag_set_debug_level(debug_level);
+            NativeMethods.plc_tag_set_debug_level(debug_level);
         }
 
 
